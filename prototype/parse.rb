@@ -90,14 +90,10 @@ class Item < Grammar::Rule
     rule_or_item.rhs.each_with_index { |x,i| # duplicate rhs partially
       @rhs << x
       if x.class == Grammar::NT
-        begin
-          if i >= dot
-            @tail_spans[i] = Span.new(-1, -1)
-          else
-            @tail_spans[i] = rule_or_item.tail_spans[i].dup
-          end
-        rescue
+        if i >= dot || !rule_or_item.is_a?(Item)
           @tail_spans[i] = Span.new(-1, -1)
+        else
+          @tail_spans[i] = rule_or_item.tail_spans[i].dup
         end
       end
     }
