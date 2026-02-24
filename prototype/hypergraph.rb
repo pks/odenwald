@@ -196,11 +196,9 @@ def HG::derive path, cur, carry
   edge = path.select { |e|    e.head.symbol==cur.symbol \
                            && e.head.left==cur.left \
                            && e.head.right==cur.right }.first
-  j = 0
   edge.rule.target.each { |i|
     if i.class == Grammar::NT
-      derive path, edge.tails[edge.rule.map[j]], carry
-      j += 1
+      derive path, edge.tails[edge.rule.map.index(i.index)], carry
     else
       carry << i
     end

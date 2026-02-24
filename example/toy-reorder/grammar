@@ -1,0 +1,6 @@
+[S] ||| [NP,1] [VP,2] ||| [NP,1] [VP,2] ||| logp=0
+[NP] ||| er ||| he ||| logp=-0.5
+[NP] ||| das [NN,1] ||| the [NN,1] ||| logp=0
+[NN] ||| buch ||| book ||| logp=0
+[VP] ||| [NP,1] [V,2] ||| [V,2] [NP,1] ||| logp=0
+[V] ||| liest ||| reads ||| logp=-0.25
