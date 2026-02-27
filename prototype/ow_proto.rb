@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-require 'trollop'
-require 'xmlsimple'
+require 'optimist'
+begin; require 'xmlsimple'; rescue LoadError; end
 require_relative 'parse'
 
 def read_grammar fn, add_glue, add_pass_through, input=nil
@@ -19,7 +19,7 @@ def read_grammar fn, add_glue, add_pass_through, input=nil
 end
 
 def main
-  cfg = Trollop::options do
+  cfg = Optimist::options do
     opt :input,            "", :type => :string, :default => '-',    :short => '-i'
     opt :grammar,          "", :type => :string, :required => true,  :short => '-g'
     opt :weights,          "", :type => :string, :required => true,  :short => '-w'

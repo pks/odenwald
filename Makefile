@@ -1,6 +1,5 @@
 COMPILER=clang
 CFLAGS=-std=c++11 -O3 -Wall
-TCMALLOC=external/gperftools/lib/libtcmalloc_minimal.a -pthread
 MSGPACK_C_INCLUDE=-I external/msgpack-c/include
 MSGPACK_C=external/msgpack-c/lib/libmsgpack.a $(MSGPACK_C_INCLUDE)
 JSON_CPP_INCLUDE=-I external/json-cpp/include
@@ -14,7 +13,7 @@ PRINT_END = @echo -e "\e[1;32mfinished building $@\e[0m"
 ###############################################################################
 # all
 #
-all: $(BIN)/ow util test
+all: $(BIN)/ow test
 
 ###############################################################################
 # ow
@@ -26,7 +25,6 @@ $(BIN)/ow: $(BIN) $(SRC)/hypergraph.o $(SRC)/odenwald.cc
 		-lstdc++ \
 		-lm \
 		$(MSGPACK_C) \
-		$(TCMALLOC) \
 		$(SRC)/hypergraph.o \
 		$(SRC)/odenwald.cc \
 		-o $(BIN)/ow
@@ -84,7 +82,6 @@ $(BIN)/test_grammar: $(BIN) $(SRC)/test_grammar.cc $(SRC)/grammar.hh
 	$(COMPILER) $(CFLAGS) \
 		-lstdc++ \
 		-lm \
-		$(TCMALLOC) \
 		$(MSGPACK_C) \
 		$(SRC)/test_grammar.cc \
 		-o $(BIN)/test_grammar
@@ -95,7 +92,6 @@ $(BIN)/test_hypergraph: $(BIN) $(SRC)/test_hypergraph.cc $(SRC)/hypergraph.o $(S
 	$(COMPILER) $(CFLAGS) \
 		-lstdc++ \
 		-lm \
-		$(TCMALLOC) \
 		$(MSGPACK_C) \
 		$(SRC)/hypergraph.o \
 		$(SRC)/test_hypergraph.cc \
@@ -108,7 +104,6 @@ $(BIN)/test_parse: $(BIN) $(SRC)/test_parse.cc $(SRC)/parse.hh \
 	$(COMPILER) $(CFLAGS) \
 		-lstdc++ \
 		-lm \
-		$(TCMALLOC) \
 		$(MSGPACK_C) \
 		$(SRC)/test_parse.cc \
 		-o $(BIN)/test_parse
@@ -119,7 +114,6 @@ $(BIN)/test_sparse_vector: $(BIN) $(SRC)/test_sparse_vector.cc $(SRC)/sparse_vec
 	$(COMPILER) $(CFLAGS) \
 		-lstdc++ \
 		-lm \
-		$(TCMALLOC) \
 		$(SRC)/test_sparse_vector.cc \
 		-o $(BIN)/test_sparse_vector
 	$(PRINT_END)

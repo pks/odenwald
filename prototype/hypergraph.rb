@@ -189,18 +189,30 @@ def HG::all_paths hypergraph, root
     paths = new_paths
   }
 
-  return paths
+  seen = Set.new
+  paths.select { |p|
+    reachable = Set.new
+    mark_reachable p, p.last, reachable
+    key = reachable.map(&:object_id).sort
+    !seen.include?(key) && seen.add(key)
+  }
+end
+
+def HG::mark_reachable path, edge, used
+  used << edge
+  edge.tails.each { |t|
+    child = path.find { |e| e.head == t }
+    mark_reachable path, child, used if child && !used.include?(child)
+  }
 end
 
 def HG::derive path, cur, carry
   edge = path.select { |e|    e.head.symbol==cur.symbol \
                            && e.head.left==cur.left \
                            && e.head.right==cur.right }.first
-  j = 0
   edge.rule.target.each { |i|
     if i.class == Grammar::NT
-      derive path, edge.tails[edge.rule.map[j]], carry
-      j += 1
+      derive path, edge.tails[edge.rule.map.index(i.index)], carry
     else
       carry << i
     end

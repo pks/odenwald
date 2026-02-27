@@ -48,10 +48,10 @@ struct Node {
           string symbol;
            short left;
            short right;
-         score_t score;
+         score_t score = 0.0;
    vector<Edge*> incoming;
    vector<Edge*> outgoing;
-    unsigned int mark;
+    unsigned int mark = 0;
 
   inline bool is_marked() { return mark >= incoming.size(); };
   friend ostream& operator<<(ostream& os, const Node& n);
@@ -98,7 +98,7 @@ void
 write(Hypergraph& hg, vector<G::Rule*>& rules, const string& fn); // FIXME
 
 void
-manual(Hypergraph& hg, vector<G::Rule*>& rules);
+manual(Hypergraph& hg, vector<G::Rule*>& rules, G::Vocabulary& vocab);
 
 } // namespace
 

@@ -90,14 +90,10 @@ class Item < Grammar::Rule
     rule_or_item.rhs.each_with_index { |x,i| # duplicate rhs partially
       @rhs << x
       if x.class == Grammar::NT
-        begin
-          if i >= dot
-            @tail_spans[i] = Span.new(-1, -1)
-          else
-            @tail_spans[i] = rule_or_item.tail_spans[i].dup
-          end
-        rescue
+        if i >= dot || !rule_or_item.is_a?(Item)
           @tail_spans[i] = Span.new(-1, -1)
+        else
+          @tail_spans[i] = rule_or_item.tail_spans[i].dup
         end
       end
     }
@@ -156,7 +152,7 @@ def Parse::parse input, n, active_chart, passive_chart, grammar
     while !active_chart.at(i,j).empty?
       active_item = active_chart.at(i,j).pop
       advanced = false
-      visit(1, i, j, 1) { |k,l|
+      visit(1, i, j) { |k,l|
         if passive_chart.has active_item.rhs[active_item.dot].symbol, k, l
           if k == active_item.right
             new_item = Item.new active_item, active_item.left, l, active_item.dot+1
@@ -186,16 +182,15 @@ def Parse::parse input, n, active_chart, passive_chart, grammar
 
     # 'self-filling' step
     new_symbols.each { |s|
-      remaining_items.each { |item|
-        next if item.dot!=0
-        next if item.rhs[item.dot].class!=Grammar::NT
-        if item.rhs[item.dot].symbol == s
-          new_item = Item.new item, i, j, item.dot+1
-          new_item.tail_spans[new_item.dot-1] = Span.new(i,j)
-          if new_item.dot==new_item.rhs.size
-            new_symbols << new_item.lhs.symbol if !new_symbols.include? new_item.lhs.symbol
-            passive_chart.add new_item, i, j
-          end
+      grammar.start_nt.each { |r|
+        next if r.rhs.size > j-i
+        next if r.rhs.first.class!=Grammar::NT
+        next if r.rhs.first.symbol != s
+        new_item = Item.new r, i, j, 1
+        new_item.tail_spans[0] = Span.new(i,j)
+        if new_item.dot==new_item.rhs.size
+          new_symbols << new_item.lhs.symbol if !new_symbols.include? new_item.lhs.symbol
+          passive_chart.add new_item, i, j
         end
       }
     }

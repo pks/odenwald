@@ -120,9 +120,9 @@ class Grammar
     @rules.map { |r| r.lhs.symbol }.select { |s| s != 'S' }.uniq.each { |symbol|
       @rules << Rule.new(NT.new('S'), [NT.new(symbol, 0)], [NT.new(symbol, 0)], [0])
       @start_nt << @rules.last
-      @rules << Rule.new(NT.new('S'), [NT.new('S', 0), NT.new('X', 1)], [NT.new('S', 0), NT.new('X', 1)], [0, 1])
-      @start_nt << @rules.last
     }
+    @rules << Rule.new(NT.new('S'), [NT.new('S', 0), NT.new('X', 1)], [NT.new('S', 0), NT.new('X', 1)], [0, 1])
+    @start_nt << @rules.last
   end
 
   def add_pass_through_rules a

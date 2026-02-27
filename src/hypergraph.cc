@@ -73,13 +73,13 @@ viterbi_path(Hypergraph& hg, Path& p)
     [](Node* n) { return n->incoming.size() == 0; });
   //list<Node*>::iterator root = hg.nodes.begin();
 
+  Hg::reset(hg.nodes, hg.edges);
   Hg::topological_sort(hg.nodes, root);
-  //  ^^^ FIXME do I need to do this when reading from file?
   Semiring::Viterbi<score_t> semiring;
   Hg::init(hg.nodes, root, semiring);
 
   for (auto n: hg.nodes) {
-    Edge* best_edge;
+    Edge* best_edge = nullptr;
     bool best = false;
     for (auto e: n->incoming) {
       score_t s = semiring.one;
@@ -135,10 +135,10 @@ derive(const Path& p, const Node* cur, vector<string>& carry)
     }
   } // FIXME this is probably not so good
 
-  unsigned j = 0;
+  unsigned j = 1;
   for (auto it: next->rule->target) {
     if (it->type() == G::NON_TERMINAL) {
-      derive(p, next->tails[next->rule->order[j]], carry);
+      derive(p, next->tails[next->rule->order[j]-1], carry);
       j++;
     } else {
       carry.push_back(it->symbol());
@@ -156,7 +156,8 @@ read(Hypergraph& hg, vector<G::Rule*>& rules, G::Vocabulary& vocab, const string
   msgpack::unpacker pac;
   while(true) {
     pac.reserve_buffer(32*1024);
-    size_t bytes = ifs.readsome(pac.buffer(), pac.buffer_capacity());
+    ifs.read(pac.buffer(), pac.buffer_capacity());
+    size_t bytes = ifs.gcount();
     pac.buffer_consumed(bytes);
     msgpack::unpacked result;
     while(pac.next(&result)) {
